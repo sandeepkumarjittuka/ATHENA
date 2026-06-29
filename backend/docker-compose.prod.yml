@@ -1,0 +1,16 @@
+services:
+  athena-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PYTHON_VERSION: "3.13"
+    image: athena-backend:prod
+    environment:
+      ATHENA_ENVIRONMENT: production
+      ATHENA_DEBUG: "false"
+      ATHENA_DATABASE_URL: ${ATHENA_DATABASE_URL:?Set ATHENA_DATABASE_URL}
+      ATHENA_REDIS_URL: ${ATHENA_REDIS_URL:?Set ATHENA_REDIS_URL}
+    ports:
+      - "8000:8000"
+    restart: unless-stopped

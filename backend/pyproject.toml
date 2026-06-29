@@ -1,0 +1,88 @@
+[project]
+name = "athena-backend"
+version = "0.1.0"
+description = "ATHENA - AI-powered market intelligence platform for intraday and scalping traders."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "ATHENA Team" }]
+keywords = ["athena", "market-intelligence", "trading", "fastapi"]
+
+# Runtime dependencies for the FastAPI backend foundation.
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "sqlalchemy>=2.0.36",
+    "asyncpg>=0.30.0",
+    "alembic>=1.14.0",
+    "redis>=5.2.0",
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.6.0",
+]
+
+# PEP 735 dependency groups (managed by uv). Dev tooling only.
+[dependency-groups]
+dev = [
+    "ruff>=0.8.0",
+    "black>=24.10.0",
+    "mypy>=1.13.0",
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=6.0.0",
+    "httpx>=0.28.0",
+]
+
+# Treat this as a non-packaged application: dependencies are installed into the
+# venv, but the project itself is not built/installed. Top-level packages are
+# importable because they live at the project root (see [tool.pytest] pythonpath).
+[tool.uv]
+package = false
+
+# ---------------------------------------------------------------------------
+# Ruff — linting (formatting is delegated to Black below)
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+extend-exclude = ["alembic/versions", ".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "B", "UP", "C4", "SIM", "TCH", "S"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/*" = ["S101"]
+
+# ---------------------------------------------------------------------------
+# Black — formatting
+# ---------------------------------------------------------------------------
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+extend-exclude = '/(\.venv|alembic/versions)/'
+
+# ---------------------------------------------------------------------------
+# mypy — strict static typing (Pydantic plugin enabled)
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unused_configs = true
+plugins = ["pydantic.mypy"]
+exclude = ['alembic/versions/']
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+check_untyped_defs = true
+
+# ---------------------------------------------------------------------------
+# pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra --strict-markers --strict-config"
+asyncio_mode = "auto"
