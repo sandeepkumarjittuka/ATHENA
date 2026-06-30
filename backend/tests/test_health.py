@@ -33,3 +33,16 @@ def test_readiness_check_returns_ready_status() -> None:
 
     assert response.status_code == 200
     assert response.json() == {"status": "ready", "service": "ATHENA"}
+
+
+def test_health_response_includes_request_id_header() -> None:
+    """Application middleware should preserve request correlation IDs."""
+
+    settings = Settings(environment="testing", debug=True)
+    client = TestClient(create_app(settings))
+
+    response = client.get("/api/v1/health", headers={"X-Request-ID": "test-request"})
+
+    assert response.status_code == 200
+    assert response.headers["X-Request-ID"] == "test-request"
+    assert "X-Process-Time-Ms" in response.headers

@@ -1,14 +1,11 @@
 """Health and readiness endpoints."""
 
-from typing import Annotated
+from fastapi import APIRouter
 
-from fastapi import APIRouter, Depends
-
-from config.settings import Settings, get_settings
+from application.dependencies import SettingsDependency
 from schemas.health import HealthResponse, ReadinessResponse
 
 router = APIRouter(tags=["health"])
-SettingsDependency = Annotated[Settings, Depends(get_settings)]
 
 
 @router.get("/health", response_model=HealthResponse)
